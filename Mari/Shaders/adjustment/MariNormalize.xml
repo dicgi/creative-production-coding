@@ -1,0 +1,25 @@
+<Node>
+	<ID>customNormalizeAdjustment</ID>
+	<Tags>
+		<Tag>_adjustment</Tag>
+	</Tags>
+	<Inputs>
+		<Input Name="Input"></Input>
+	</Inputs>
+	<Attributes>
+		<Attribute></Attribute>
+	</Attributes>
+	<Contexts>
+		<Context Type="GLSL">
+			<Shader>
+				<Inputs>
+					<Input name="Input"><Default>vec4(1, 1, 1, 1)</Default></Input>
+				</Inputs>
+				<Body><![CDATA[
+					Output.rgb = normalize(#Input.rgb);
+					Output.a = #Input.a;
+				]]></Body>
+			</Shader>
+		</Context>
+	</Contexts>
+</Node>

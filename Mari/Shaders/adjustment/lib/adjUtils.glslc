@@ -1,0 +1,58 @@
+#version 330
+
+//! include | adjUtils.glslh
+
+float avrValue(vec3 input){
+	return (input.r + input.g + input.b)/3;
+}
+float avrValue(vec4 input){
+	return (input.r + input.g + input.b)/3;
+}
+float maxValue(vec3 input){
+	return max(max(input.r, input.g), input.b);
+}
+float maxValue(vec4 input){
+	return max(max(input.r, input.g), input.b);
+}
+float minValue(vec3 input){
+	return min(min(input.r, input.g), input.b);
+}
+float minValue(vec4 input){
+	return min(min(input.r, input.g), input.b);
+}
+float ccir601Value(vec3 input){
+	float kb = 0.114;
+	float kr = 0.299;
+	float kg = 1 - kr - kb;
+	return kr*input.r + kg*input.g + kb*input.b;
+}
+float ccir601Value(vec4 input){
+	float kb = 0.114;
+	float kr = 0.299;
+	float kg = 1 - kr - kb;
+	return kr*input.r + kg*input.g + kb*input.b;
+}
+float rec709Value(vec3 input){
+	float kb = 0.0722;
+	float kr = 0.2126;
+	float kg = 1 - kr - kb;
+	return kr*input.r + kg*input.g + kb*input.b;
+}
+float rec709Value(vec4 input){
+	float kb = 0.0722;
+	float kr = 0.2126;
+	float kg = 1 - kr - kb;
+	return kr*input.r + kg*input.g + kb*input.b;
+}
+float rec2020Value(vec3 input){
+	float kb = 0.0593;
+	float kr = 0.2627;
+	float kg = 1 - kr - kb;
+	return kr*input.r + kg*input.g + kb*input.b;
+}
+float rec2020Value(vec4 input){
+	float kb = 0.0593;
+	float kr = 0.2627;
+	float kg = 1 - kr - kb;
+	return kr*input.r + kg*input.g + kb*input.b;
+}

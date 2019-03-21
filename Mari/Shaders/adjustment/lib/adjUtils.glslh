@@ -1,0 +1,12 @@
+float avrValue(vec3 input);
+float avrValue(vec4 input);
+float maxValue(vec3 input);
+float maxValue(vec4 input);
+float minValue(vec3 input);
+float minValue(vec4 input);
+float ccir601Value(vec3 input);
+float ccir601Value(vec4 input);
+float rec709Value(vec3 input);
+float rec709Value(vec4 input);
+float rec2020Value(vec3 input);
+float rec2020Value(vec4 input);

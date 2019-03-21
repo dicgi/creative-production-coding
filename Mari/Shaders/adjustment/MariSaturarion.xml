@@ -1,0 +1,55 @@
+<Node>
+	<ID>customSaturationAdjustment</ID>
+	<Tags>
+		<Tag>_adjustment</Tag>
+	</Tags>
+	<Inputs>
+		<Input Name="Input"></Input>
+	</Inputs>
+	<Attributes>
+		<Attribute Name="type" PrettyName="luminance type" Type="stringlist">maximum,average,maximum,minimum,ccir601,rec709,rec2020</Attribute>
+		<Attribute Name="saturation" Type="double" Min="0" Max="4">1</Attribute>
+		<Attribute Name="absolute" PrettyName="absolute value" Type="bool">false</Attribute>
+	</Attributes>
+	<Contexts>
+		<Context Type="GLSL">
+			<Shader>
+				<Inputs>
+					<Input name="Input"><Default>vec4(1, 1, 1, 1)</Default></Input>
+				</Inputs>
+				<Body><![CDATA[
+					float value;
+					switch($type){
+						case 0:
+							value = avrValue(#Input);
+							break;
+						case 1:
+							value = maxValue(#Input);
+							break;
+						case 2:
+							value = minValue(#Input);
+							break;
+						case 3:
+							value = ccir601Value(#Input);
+							break;
+						case 4:
+							value = rec709Value(#Input);
+							break;
+						case 5:
+							value = rec2020Value(#Input);
+							break;
+						default:
+							Output.rgb = vec3(1);
+					}
+					Output.r = #Input.r*$saturation + value*(1 - $saturation);
+					Output.g = #Input.g*$saturation + value*(1 - $saturation);
+					Output.b = #Input.b*$saturation + value*(1 - $saturation);
+					Output.a = 1;
+					if($absolute){
+						Output = abs(Output);
+					}
+				]]></Body>
+			</Shader>
+		</Context>
+	</Contexts>
+</Node>
