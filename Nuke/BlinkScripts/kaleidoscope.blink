@@ -1,0 +1,73 @@
+/*.........................................................................................
+Author: Diego Inácio
+GitHub: github.com/diegoinacio
+  Date: APR/20/2016
+...........................................................................................
+Complexity: O(n)
+Use this code on blinkScript node for nuke.
+.........................................................................................*/
+inline float lerp(float t, float a, float b){
+	return (1.0f - t)*a + t*b;
+}
+
+kernel kaleidoscope: ImageComputationKernel<eComponentWise>{
+	Image<eRead, eAccessRandom, eEdgeClamped> in;
+	Image<eWrite> out;
+
+	param:
+		float rot, thetaTile, radiusTile, thetaOffset, radiusOffset, thetaRange, radiusRange;
+
+	local:
+		float M, N, cx, cy;
+
+	void define(){
+		defineParam(rot, "rotation", 0.5f);
+		defineParam(thetaTile, "theta repeat", 4.0f);
+		defineParam(radiusTile, "radius repeat", 2.0f);
+		defineParam(thetaOffset, "theta offset", 0.5f);
+		defineParam(radiusOffset, "radius offset", 0.5f);
+		defineParam(thetaRange, "theta range", 0.5f);
+		defineParam(radiusRange, "radius range", 0.5f);
+	}
+
+	void init(){
+		M = in.bounds.width();
+		N = in.bounds.height();
+		cx = M*0.5f;
+		cy = N*0.5f;
+	}
+
+	void process(int2 p){
+		ValueType(in) result(0);
+		float theta, radius, thetaOffsetRemap, radiusOffsetRemap;
+		// set angle and distance of pixels to polar mapping
+		theta = fmod((atan2(p.y - cy, p.x - cx) + PI)/(2*PI) + rot, 1.0f);
+		radius = 2*sqrt(pow(p.x - cx, 2) + pow(p.y - cy, 2))/N;
+		// start repetition settings
+		theta *= thetaTile;
+		radius *= radiusTile;
+		// mirror repeats
+		theta = fmod(floor(theta), 2.0f) == 0 ? fmod(theta, 1.0f) : 1 - fmod(theta, 1.0f);
+		radius = fmod(floor(radius), 2.0f) == 0 ? fmod(radius, 1.0f) : 1 - fmod(radius, 1.0f);
+		// offset's remapping combined with the range
+		thetaOffsetRemap = lerp(	clamp(thetaOffset, 0.0f, 1.0f),
+									clamp(thetaRange, 0.0f, 1.0f)*0.5f,
+									1.0f - clamp(thetaRange, 0.0f, 1.0f)*0.5f);
+		radiusOffsetRemap = lerp(	clamp(radiusOffset, 0.0f, 1.0f),
+									clamp(radiusRange, 0.0f, 1.0f)*0.5f,
+									1.0f - clamp(radiusRange, 0.0f, 1.0f)*0.5f);
+		// rearranges coordinates
+		theta = lerp(theta, thetaOffsetRemap - thetaRange*0.5f, thetaOffsetRemap + thetaRange*0.5f);
+		radius = lerp(radius, radiusOffsetRemap - radiusRange*0.5f, radiusOffsetRemap + radiusRange*0.5f);
+		// remap the coordinates for image length
+		theta *= M;
+		radius *= N;
+		// provide interpolation for intermediate coordinates
+		result += lerp(fmod(theta, 1.0f), in(theta, radius), in(ceil(theta), radius));
+		result += lerp(fmod(radius, 1.0f), in(theta, radius), in(theta, ceil(radius)));
+		result += lerp(fmod(theta*radius, 1.0f), in(theta, radius), in(ceil(theta), ceil(radius)));
+		result /= 3;
+		// output
+		out() = result;
+	}
+};

@@ -1,0 +1,77 @@
+/*.........................................................................................
+Author: Diego Inácio
+GitHub: github.com/diegoinacio
+  Date: APR/25/2016
+...........................................................................................
+Complexity: O(n)
+Adjust the levels of saturation statisticaly using median value
+Use this code on blinkScript node for nuke.
+.........................................................................................*/
+kernel medianSaturation: ImageComputationKernel<ePixelWise>{
+	Image<eRead, eAccessPoint, eEdgeNone> in;
+	Image<eWrite> out;
+
+	param:
+		bool AM, GM, HM;
+		float saturation;
+		bool alpha;
+
+	void define(){
+		defineParam(AM, "arithmetic mean", false);
+		defineParam(GM, "geometric mean", false);
+		defineParam(HM, "harmonic mean", false);
+		defineParam(saturation, "saturation", 1.0f);
+		defineParam(alpha, "includes alpha", false);
+	}
+
+	void process(){
+		float medi, ami, gmi, hmi;
+		SampleType(in) color(0);
+		SampleType(in) result(0);
+		color = in();
+		ami = (color.x + color.y + color.z)/3.0f;
+		gmi = pow(color.x*color.y*color.z, 1.0f/3.0f);
+		hmi = 3.0f*pow(1.0f/color.x + 1.0f/color.y + 1.0f/color.z, -1.0f);
+		if(!AM and !GM and !HM){
+			float l[3] = {color.x, color.y, color.z};
+			medi = median(l, 3);
+		}
+		else if(AM and !GM and !HM){
+			float l[4] = {color.x, color.y, color.z, ami};
+			medi = median(l, 4);
+		}
+		else if(!AM and GM and !HM){
+			float l[4] = {color.x, color.y, color.z, gmi};
+			medi = median(l, 4);
+		}
+		else if(!AM and !GM and HM){
+			float l[4] = {color.x, color.y, color.z, hmi};
+			medi = median(l, 4);
+		}
+		else if(AM and GM and !HM){
+			float l[5] = {color.x, color.y, color.z, ami, gmi};
+			medi = median(l, 5);
+		}
+		else if(AM and !GM and HM){
+			float l[5] = {color.x, color.y, color.z, ami, hmi};
+			medi = median(l, 5);
+		}
+		else if(!AM and GM and HM){
+			float l[5] = {color.x, color.y, color.z, gmi, hmi};
+			medi = median(l, 5);
+		}
+		else if(AM and GM and HM){
+			float l[6] = {color.x, color.y, color.z, ami, gmi, hmi};
+			medi = median(l, 6);
+		}
+		else{
+			float l[3] = {color.x, color.y, color.z};
+			medi = median(l, 3);
+		}
+		result = (1 - saturation)*medi + saturation*color;
+		if(!alpha){
+			result.w = color.w;
+		}
+		out() = result;
+	}
+};

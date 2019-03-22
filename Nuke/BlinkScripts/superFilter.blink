@@ -1,0 +1,53 @@
+/*..............................................................................................
+Author: Diego Inácio
+GitHub: github.com/diegoinacio
+  Date: JAN/13/2017
+................................................................................................
+Complexity: O(n)
+Provides a parametric filter based on the Superformula.
+Use this code on blinkScript node for nuke.
+p.s: remember to set the option "Percentage of image height per tile"("Settings" tab) to 100
+..............................................................................................*/
+inline float lerp(float t, float a, float b){
+	return t <= a ? 1 : t > b ? 0 : (b - t)/(b - a);
+}
+
+kernel superShape: ImageComputationKernel<eComponentWise>{
+	Image<eWrite> out;
+
+	param:
+		float a, b, y, z, n1, n2, n3, size, rot, falloff;
+
+	local:
+		float M, N;
+
+	void define(){
+		defineParam(a, "a", 1.0f);
+		defineParam(b, "b", 1.0f);
+		defineParam(y, "y", 3.0f);
+		defineParam(z, "z", 3.0f);
+		defineParam(n1, "n1", 5.0f);
+		defineParam(n2, "n2", 18.0f);
+		defineParam(n3, "n3", 18.0f);
+		defineParam(size, "size", 1.0f);
+		defineParam(rot, "rotation", 0.5f);
+		defineParam(falloff, "falloff", 0.01f);
+	}
+
+	void init(){
+		M = out.bounds.width();
+		N = out.bounds.height();
+	}
+
+	void process(int2 p){
+		float s, t, r, theta, radius, rMin, rMax;
+		s = p.x/M;
+		t = p.y/N;
+		r = sqrt(pow(0.5f - s, 2) + pow(0.5f - t, 2))*2.0f*PI/size;
+		theta = atan2(0.5f - t, 0.5f - s) + rot*2.0f*PI;
+		radius = pow(pow(fabs(cos(theta*y/4.0f)/a), n2) + pow(fabs(sin(theta*z/4.0f)/b), n3), - 1.0f/n1);
+		rMin = radius - falloff;
+		rMax = radius + falloff;
+		out() = lerp(r, rMin, rMax);
+	}
+};

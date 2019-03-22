@@ -1,0 +1,49 @@
+/*.........................................................................................
+Author: Diego Inácio
+GitHub: github.com/diegoinacio
+  Date: MAR/01/2016
+...........................................................................................
+Complexity: O(n*log(n))
+Inf and NaN artifact removal.
+Use this code on blinkScript node for nuke.
+.........................................................................................*/
+#define isInf(value) value/value != 1 ? true : false
+#define isNan(value) value != value ? true : false
+
+kernel infNanFilter: public ImageComputationKernel<eComponentWise>{
+	Image<eRead, eAccessRanged2D, eEdgeClamped> in;
+	Image<eWrite, eAccessPoint> out;
+
+	param:
+		float radius;
+
+	void define() {
+		defineParam(radius, "radius", 1.0f);
+	}
+	
+	void init(){
+		in.setRange(-radius, -radius, radius, radius);
+	}
+
+	void process(){
+		float current = in(0, 0);
+		float ranged;
+		float result = 0;
+		int count = 0;
+		if(isInf(current) || isNan(current)){
+			for(int j = - radius; j <= radius; j++){
+				for(int i = - radius; i <= radius; i++){
+					ranged = in(i, j);
+					if(isInf(ranged) || isNan(ranged)) continue;
+					else{
+						result += in(i, j);
+						count++;
+					}
+				}
+			}
+			if(result != 0) out() = result/count;
+			else out() = 0;
+		}
+		else out() = current;
+	}
+};

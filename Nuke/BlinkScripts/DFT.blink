@@ -1,0 +1,53 @@
+/*.........................................................................................
+Author: Diego Inácio
+GitHub: github.com/diegoinacio
+  Date: MAR/10/2017
+...........................................................................................
+Complexity: O(n²)
+Discrete Fourier transform for frequency domain analysis.
+Use this code on blinkScript node for nuke.
+.........................................................................................*/
+//defining the type for complex numbers
+typedef float2 complex;
+
+//Calculate complex number's exponential based on Euler's formula
+inline complex cExp(float a){
+	return a < 0 ? complex(cos(fabs(a)), - sin(fabs(a))) : complex(cos(a), sin(a));
+}
+
+kernel DFT: ImageComputationKernel<eComponentWise>{
+	Image<eRead, eAccessRandom, eEdgeNone> in;
+	Image<eWrite> out;
+
+	param:
+		bool centerKernel;
+
+	local:
+		float N1, N2;
+
+	void define(){
+		defineParam(centerKernel, "center kernel", true);
+	}
+
+	void init(){
+		N1 = in.bounds.width();
+		N2 = in.bounds.height();
+	}
+
+	void process(int2 p){
+		ValueType(in) x(0);
+		complex X(0);
+		float w1 = centerKernel ? fmod(p.x + N1*0.5f, N1) : p.x;
+		float w2 = centerKernel ? fmod(p.y + N2*0.5f, N2) : p.y;
+		for(int n1 = 0; n1 < N1; n1++){
+			for(int n2 = 0; n2 < N2; n2++){
+				x = in(n1, n2);
+				X += x*cExp(-2.0f*PI*(w1*n1/N1 + w2*n2/N2));
+			}
+		}
+		// normalization
+		X *= 1/sqrt(N1*N2);
+		// output
+		out() = X.x + X.y;
+	}
+};

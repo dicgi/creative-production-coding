@@ -1,0 +1,22 @@
+/*.........................................................................................
+Author: Diego Inácio
+GitHub: github.com/diegoinacio
+  Date: APR/08/2016
+...........................................................................................
+Complexity: O(n)
+Normalize RGB channels.
+Use this code on blinkScript node for nuke.
+.........................................................................................*/
+kernel Normalize: ImageComputationKernel<ePixelWise>{
+	Image<eRead, eAccessPoint> in;
+	Image<eWrite> out;
+
+	void process(){
+		SampleType(in) n(in());
+		float normal = sqrt(pow(n.x, 2) + pow(n.y, 2) + pow(n.z, 2));
+		if(normal != 0){
+			n.x/= normal; n.y/= normal; n.z/= normal;
+		}
+		out() = n;
+	}
+};

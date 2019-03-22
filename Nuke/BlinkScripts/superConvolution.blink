@@ -1,0 +1,80 @@
+/*..............................................................................................
+Author: Diego Inácio
+GitHub: github.com/diegoinacio
+  Date: APR/11/2016
+................................................................................................
+Complexity: O(n*log(n))
+Uses superformula's shapes in convolution matrices.
+Use this code on blinkScript node for nuke.
+p.s: remember to set the option "Percentage of image height per tile"("Settings" tab) to 100
+..............................................................................................*/
+inline float lerp(float t, float a, float b){
+	return t <= a ? 1 : t > b ? 0 : (b - t)/(b - a);
+}
+
+kernel superConvolution: ImageComputationKernel<eComponentWise>{
+	Image<eRead, eAccessRandom, eEdgeConstant> in;
+	Image<eWrite> out;
+
+	param:
+		bool sample;
+		float a, b, y, z, n1, n2, n3, size, rot, falloff, kRad;
+
+	local:
+		float M, N;
+
+	void define(){
+		defineParam(sample, "view sample filter", false);
+		defineParam(a, "a", 1.0f);
+		defineParam(b, "b", 1.0f);
+		defineParam(y, "y", 3.0f);
+		defineParam(z, "z", 3.0f);
+		defineParam(n1, "n1", 5.0f);
+		defineParam(n2, "n2", 18.0f);
+		defineParam(n3, "n3", 18.0f);
+		defineParam(size, "size", 1.0f);
+		defineParam(rot, "rotation", 0.5f);
+		defineParam(falloff, "falloff", 0.01f);
+		defineParam(kRad, "kernel radius", 16.0f);
+	}
+
+	void init(){
+		M = out.bounds.width();
+		N = out.bounds.height();
+	}
+
+	void process(int2 p){
+		float s, t, r, theta, radius, rMin, rMax;
+		if(sample){
+			s = p.x/M;
+			t = p.y/N;
+			r = sqrt(pow(0.5f - s, 2) + pow(0.5f - t, 2))*2.0f*PI/size;
+			theta = atan2(0.5f - t, 0.5f - s) + rot*2.0f*PI;
+			radius = pow(pow(fabs(cos(theta*y/4.0f)/a), n2) + pow(fabs(sin(theta*z/4.0f)/b), n3), - 1.0f/n1);
+			rMin = radius - falloff;
+			rMax = radius + falloff;
+			out() = lerp(r, rMin, rMax);
+		}
+		else{
+			ValueType(in) result(0);
+			ValueType(in) filter(0);
+			float2 M(p.x - kRad, p.x + kRad);
+			float2 N(p.y - kRad, p.y + kRad);
+			for(int j = N[0]; j <= N[1]; j++){
+				for(int i = M[0]; i <= M[1]; i++){
+					s = lerp(i, M[0], M[1]);
+					t = lerp(j, N[0], N[1]);
+					r = sqrt(pow(0.5f - s, 2) + pow(0.5f - t, 2))*2.0f*PI/size;
+					theta = atan2(0.5f - t, 0.5f - s) + rot*2.0f*PI;
+					radius = pow(pow(fabs(cos(theta*y/4.0f)/a), n2) + pow(fabs(sin(theta*z/4.0f)/b), n3), - 1.0f/n1);
+					rMin = radius - falloff;
+					rMax = radius + falloff;
+					filter += lerp(r, rMin, rMax);
+					result += lerp(r, rMin, rMax)*in(i, j);
+				}
+			}
+			result /= filter;
+			out() = result;
+		}
+	}
+};
