@@ -1,3 +1,3 @@
-# coding
+# Creative Production Coding
 
-*Scripts*, *plugins*, *addons* or any kind of tool which promotes productivity for creative productions.
+_Scripts_, _plugins_, _addons_ or any kind of tool which promotes productivity for _creative productions_.
