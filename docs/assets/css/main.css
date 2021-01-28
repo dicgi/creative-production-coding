@@ -181,12 +181,32 @@ html {
 }
 
 body {
+  background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/index.png");
+  background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/index.png");
   background-color: #444444;
-  background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/bg.png");
-  background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/bg.png");
   background-size: auto, cover;
   background-attachment: fixed, fixed;
   background-position: center, center;
+}
+
+body[background="maya"] {
+  background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/maya.png");
+  background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/maya.png");
+}
+
+body[background="mari"] {
+  background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/mari.png");
+  background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/mari.png");
+}
+
+body[background="nuke"] {
+  background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/nuke.png");
+  background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/nuke.png");
+}
+
+body[background="houdini"] {
+  background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/houdini.png");
+  background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/houdini.png");
 }
 
 body.is-preload *,
@@ -3283,12 +3303,28 @@ body.is-menu-visible #menu .inner {
 @media screen and (max-width: 1280px) {
   #banner {
     padding: 7em 0 8.25em 0 ;
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/index.png");
+    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/index.png");
     background-color: #444444;
-    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/bg.png");
-    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/bg.png");
     background-size: auto, cover;
     background-position: center, center;
     margin-bottom: -6.5em;
+  }
+  #banner[background="maya"] {
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/maya.png");
+    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/maya.png");
+  }
+  #banner[background="mari"] {
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/mari.png");
+    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/mari.png");
+  }
+  #banner[background="nuke"] {
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/nuke.png");
+    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/nuke.png");
+  }
+  #banner[background="houdini"] {
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/houdini.png");
+    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/houdini.png");
   }
 }
 
@@ -3376,12 +3412,28 @@ body.is-preload #banner p {
 @media screen and (max-width: 1280px) {
   #wrapper > header {
     padding: 9em 0 6.25em 0 ;
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/index.png");
+    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/index.png");
     background-color: #444444;
-    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/bg.png");
-    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/bg.png");
     background-size: auto, cover;
     background-position: center, 0% 30%;
     margin-bottom: -6.5em;
+  }
+  #wrapper > header[background="maya"] {
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/maya.png");
+    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/maya.png");
+  }
+  #wrapper > header[background="mari"] {
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/mari.png");
+    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/mari.png");
+  }
+  #wrapper > header[background="nuke"] {
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/nuke.png");
+    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/nuke.png");
+  }
+  #wrapper > header[background="houdini"] {
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/houdini.png");
+    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/houdini.png");
   }
 }
 
@@ -3856,13 +3908,29 @@ body.is-preload #banner p {
 
 @media screen and (max-width: 1280px) {
   #footer {
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/index.png");
+    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/index.png");
     background-color: #444444;
-    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/bg.png");
-    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/bg.png");
     background-size: auto, cover;
     background-position: center, center;
     margin-top: -6.5em;
     padding-top: 6.5em;
+  }
+  #footer[background="maya"] {
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/maya.png");
+    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/maya.png");
+  }
+  #footer[background="mari"] {
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/mari.png");
+    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/mari.png");
+  }
+  #footer[background="nuke"] {
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/nuke.png");
+    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/nuke.png");
+  }
+  #footer[background="houdini"] {
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(68, 68, 68, 0.5)), to(rgba(68, 68, 68, 0.5))), url("../../images/houdini.png");
+    background-image: linear-gradient(to top, rgba(68, 68, 68, 0.5), rgba(68, 68, 68, 0.5)), url("../../images/houdini.png");
   }
 }
 
