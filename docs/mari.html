@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="title" content="mari" />
+    <title>Mari</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript
+      ><link rel="stylesheet" href="assets/css/noscript.css"
+    /></noscript>
+  </head>
+
+  <body class="is-preload">
+    <!-- Page Wrapper -->
+    <div id="page-wrapper">
+      <!-- Header -->
+      <header id="header" class="alt"></header>
+
+      <!-- Menu -->
+      <nav id="menu"></nav>
+
+      <!-- Banner -->
+      <section id="banner">
+        <div class="inner">
+          <h2>Mari</h2>
+          <p>
+            Utilities for use with the
+            <a href="https://www.foundry.com/products/mari" target="_blank"
+              >Foundry <strong>Mari</strong></a
+            >.
+          </p>
+        </div>
+      </section>
+
+      <!-- Wrapper -->
+      <section class="wrapper">
+        <div class="wrapper">
+          <div class="inner">
+            <p>
+              A collection of tools for
+              <a href="https://www.foundry.com/products/mari" target="_blank"
+                >Foundry <strong>Mari</strong></a
+              >
+              that make it easy to produce CG textures. Here you are going to
+              find:
+            </p>
+            <!-- ? Content table -->
+            <div class="content-table">
+              <ul>
+                <li><a href="#adjustment-shaders">1. Adjustment Shaders</a></li>
+                <ul>
+                  <li><a href="#normalize">1.1. Normalize</a></li>
+                  <li><a href="#saturation">1.2. Saturation</a></li>
+                </ul>
+              </ul>
+            </div>
+            <p>
+              If you want to know more, please consider vising the
+              <a
+                href="https://github.com/diegoinacio/creative-production-coding/tree/master/Mari"
+                target="_blank"
+                class="button small icon brands fa-github"
+                >repository</a
+              >.
+            </p>
+            <!-- ? Content -->
+            <div class="content">
+              <!-- ! Section -->
+              <h2 id="adjustment-shaders">1. Adjustment Shaders</h2>
+              <p>Layers that provide adjustment to other layers.</p>
+              <!-- * Shader -->
+              <h3>1.1. Normalize</h3>
+              <p>
+                This first example, shows a pretty simple adjustment layer that
+                normalizes the colors of the stack below.
+              </p>
+              <pre>
+                <code class="language-markup">
+                  &lt;!-- MariNormalize.xml --&gt;
+                  &lt;Node&gt;
+                    &lt;ID&gt;customNormalizeAdjustment&lt;/ID&gt;
+                    &lt;Tags&gt;
+                      &lt;Tag&gt;_adjustment&lt;/Tag&gt;
+                    &lt;/Tags&gt;
+                    &lt;Inputs&gt;
+                      &lt;Input Name="Input"&gt;&lt;/Input&gt;
+                    &lt;/Inputs&gt;
+                    &lt;Attributes&gt;
+                      &lt;Attribute&gt;&lt;/Attribute&gt;
+                    &lt;/Attributes&gt;
+                    &lt;Contexts&gt;
+                      &lt;Context Type="GLSL"&gt;
+                        &lt;Shader&gt;
+                          &lt;Inputs&gt;
+                            &lt;Input name="Input"&gt;&lt;Default&gt;vec4(1, 1, 1, 1)&lt;/Default&gt;&lt;/Input&gt;
+                          &lt;/Inputs&gt;
+                          &lt;Body&gt;&lt;![CDATA[
+                            Output.rgb = normalize(#Input.rgb);
+                            Output.a = #Input.a;
+                          ]]&gt;&lt;/Body&gt;
+                        &lt;/Shader&gt;
+                      &lt;/Context&gt;
+                    &lt;/Contexts&gt;
+                  &lt;/Node&gt;
+                </code>
+              </pre>
+              <p>
+                To register this shader, just include the following piece of
+                code in the
+                <a
+                  href="https://learn.foundry.com/nuke/developers/63/pythondevguide/startup.html"
+                  target="_blank"
+                  >start-up script</a
+                >
+                called
+                <a
+                  href="https://github.com/diegoinacio/creative-production-coding/blob/master/Mari/Scripts/init.py"
+                  target="_blank"
+                  >init.py</a
+                >.
+              </p>
+              <pre>
+                <code class="language-python">
+                  import mari
+
+                  mari.gl_render.registerCustomAdjustmentLayerFromXMLFile(
+                    'Custom-Shaders/Normalize',
+                    'path/to/adjustment/MariNormalize.xml'
+                  )
+                </code>
+              </pre>
+              <!-- /* Shader -->
+              <!-- * Shader -->
+              <h3>1.2. Saturation</h3>
+              <p>
+                For this second example, we are going to declare custom
+                functions to be used in the shader.
+              </p>
+              <p>
+                Firstly, we have to declare the header file with the extension
+                <code>.glslh</code>.
+              </p>
+              <pre>
+                <code class="language-clike">
+                  // adjustmentUtils.glslh
+
+                  // ! Utils
+                  float avrValue(vec3 input);
+                  float avrValue(vec4 input);
+                  float maxValue(vec3 input);
+                  float maxValue(vec4 input);
+                  float minValue(vec3 input);
+                  float minValue(vec4 input);
+
+                  // ! Saturation functions
+                  float ccir601Value(vec3 input);
+                  float ccir601Value(vec4 input);
+                  float rec709Value(vec3 input);
+                  float rec709Value(vec4 input);
+                  float rec2020Value(vec3 input);
+                  float rec2020Value(vec4 input);
+                </code>
+              </pre>
+              <p>
+                The next step is to declare the function code file with the
+                extension <code>.glslc</code>.
+              </p>
+              <pre>
+                <code class="language-clike">
+                  // adjustmentUtils.glslc
+
+                  #version 330
+
+                  // ! include | adjUtils.glslh
+
+                  // ! Utils
+
+                  float avrValue(vec3 input)
+                  {
+                    return (input.r + input.g + input.b) / 3;
+                  }
+
+                  float avrValue(vec4 input)
+                  {
+                    return (input.r + input.g + input.b) / 3;
+                  }
+
+                  float maxValue(vec3 input)
+                  {
+                    return max(max(input.r, input.g), input.b);
+                  }
+
+                  float maxValue(vec4 input)
+                  {
+                    return max(max(input.r, input.g), input.b);
+                  }
+
+                  float minValue(vec3 input)
+                  {
+                    return min(min(input.r, input.g), input.b);
+                  }
+
+                  float minValue(vec4 input)
+                  {
+                    return min(min(input.r, input.g), input.b);
+                  }
+
+                  // ! Saturation functions
+
+                  float ccir601Value(vec3 input)
+                  {
+                    float kb = 0.114;
+                    float kr = 0.299;
+                    float kg = 1 - kr - kb;
+                    return kr * input.r + kg * input.g + kb * input.b;
+                  }
+
+                  float ccir601Value(vec4 input)
+                  {
+                    float kb = 0.114;
+                    float kr = 0.299;
+                    float kg = 1 - kr - kb;
+                    return kr * input.r + kg * input.g + kb * input.b;
+                  }
+
+                  float rec709Value(vec3 input)
+                  {
+                    float kb = 0.0722;
+                    float kr = 0.2126;
+                    float kg = 1 - kr - kb;
+                    return kr * input.r + kg * input.g + kb * input.b;
+                  }
+
+                  float rec709Value(vec4 input)
+                  {
+                    float kb = 0.0722;
+                    float kr = 0.2126;
+                    float kg = 1 - kr - kb;
+                    return kr * input.r + kg * input.g + kb * input.b;
+                  }
+
+                  float rec2020Value(vec3 input)
+                  {
+                    float kb = 0.0593;
+                    float kr = 0.2627;
+                    float kg = 1 - kr - kb;
+                    return kr * input.r + kg * input.g + kb * input.b;
+                  }
+
+                  float rec2020Value(vec4 input)
+                  {
+                    float kb = 0.0593;
+                    float kr = 0.2627;
+                    float kg = 1 - kr - kb;
+                    return kr * input.r + kg * input.g + kb * input.b;
+                  }
+                </code>
+              </pre>
+              <p>
+                Now we can finally write the shader and use the custom functions
+                we declared.
+              </p>
+              <pre>
+                <code class="language-markup">
+                  &lt;!-- MariSaturation.xml --&gt;
+                  &lt;Node&gt;
+                    &lt;ID&gt;customSaturationAdjustment&lt;/ID&gt;
+                    &lt;Tags&gt;
+                      &lt;Tag&gt;_adjustment&lt;/Tag&gt;
+                    &lt;/Tags&gt;
+                    &lt;Inputs&gt;
+                      &lt;Input Name="Input"&gt;&lt;/Input&gt;
+                    &lt;/Inputs&gt;
+                    &lt;Attributes&gt;
+                      &lt;Attribute Name="type" PrettyName="luminance type" Type="stringlist"&gt;maximum,average,maximum,minimum,ccir601,rec709,rec2020&lt;/Attribute&gt;
+                      &lt;Attribute Name="saturation" Type="double" Min="0" Max="4"&gt;1&lt;/Attribute&gt;
+                      &lt;Attribute Name="absolute" PrettyName="absolute value" Type="bool"&gt;false&lt;/Attribute&gt;
+                    &lt;/Attributes&gt;
+                    &lt;Contexts&gt;
+                      &lt;Context Type="GLSL"&gt;
+                        &lt;Shader&gt;
+                          &lt;Inputs&gt;
+                            &lt;Input name="Input"&gt;&lt;Default&gt;vec4(1, 1, 1, 1)&lt;/Default&gt;&lt;/Input&gt;
+                          &lt;/Inputs&gt;
+                          &lt;Body&gt;&lt;![CDATA[
+                            float value;
+                            switch($type){
+                              case 0:
+                                value = avrValue(#Input);
+                                break;
+                              case 1:
+                                value = maxValue(#Input);
+                                break;
+                              case 2:
+                                value = minValue(#Input);
+                                break;
+                              case 3:
+                                value = ccir601Value(#Input);
+                                break;
+                              case 4:
+                                value = rec709Value(#Input);
+                                break;
+                              case 5:
+                                value = rec2020Value(#Input);
+                                break;
+                              default:
+                                Output.rgb = vec3(1);
+                            }
+                            Output.r = #Input.r*$saturation + value*(1 - $saturation);
+                            Output.g = #Input.g*$saturation + value*(1 - $saturation);
+                            Output.b = #Input.b*$saturation + value*(1 - $saturation);
+                            Output.a = 1;
+                            if($absolute){
+                              Output = abs(Output);
+                            }
+                          ]]&gt;&lt;/Body&gt;
+                        &lt;/Shader&gt;
+                      &lt;/Context&gt;
+                    &lt;/Contexts&gt;
+                  &lt;/Node&gt;
+                </code>
+              </pre>
+              <p>
+                To register this shader, just include the following piece of
+                code in the
+                <a
+                  href="https://learn.foundry.com/nuke/developers/63/pythondevguide/startup.html"
+                  target="_blank"
+                  >start-up script</a
+                >
+                called
+                <a
+                  href="https://github.com/diegoinacio/creative-production-coding/blob/master/Mari/Scripts/init.py"
+                  target="_blank"
+                  >init.py</a
+                >.
+              </p>
+              <pre>
+                <code class="language-python">
+                  import mari
+
+                  mari.gl_render.registerCustomHeaderFile(
+                    'ADJUSTMENT_UTILS_GLSLH',
+                    'path/to/adjustment/lib/adjustmentUtils.glslh'
+                  )
+                  mari.gl_render.registerCustomCodeFile(
+                    'ADJUSTMENT_UTILS_GLSLC',
+                    'path/to/adjustment/lib/adjustmentUtils.glslc'
+                  )
+
+                  mari.gl_render.registerCustomAdjustmentLayerFromXMLFile(
+                    'Custom-Shaders/Saturation',
+                    'path/to/adjustment/MariSaturation.xml'
+                  )
+                </code>
+              </pre>
+              <!-- /* Shader -->
+              <!-- /! Section -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <section id="footer"></section>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <script src="assets/js/prism.js"></script>
+
+    <script src="assets/template/setup.js"></script>
+    <script src="assets/template/header.js"></script>
+    <script src="assets/template/menu.js"></script>
+    <script src="assets/template/footer.js"></script>
+  </body>
+</html>
